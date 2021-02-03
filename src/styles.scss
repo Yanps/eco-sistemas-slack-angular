@@ -1,1 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+:root {
+    --column-bg: #544538;
+    --active-item: #5db09d;
+    --hover-item: #4a3c30;
+    --text-color: #ffffff;
+    --active-presence: #ffffff;
+    --mention-badge: #5db09d;
+    --menu-bg-hover: #42362b;
+    --active-item-text: #ffffff;
+}

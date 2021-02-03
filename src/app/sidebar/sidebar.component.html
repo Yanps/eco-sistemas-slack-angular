@@ -1,0 +1,27 @@
+<aside class="sidebar"> 
+
+    <div class="main-title">
+        <h1 class="title">
+            <img src="assets/images/slack.png" alt="Slack logo" class="logo">
+            EcoSistemas - Slack <mat-icon>add_alert</mat-icon></h1>
+    </div>
+
+    <div class="threads">
+        <h2 class="title"><mat-icon>message</mat-icon> All Threads</h2>
+    </div>
+
+
+    <div class="channels">
+        <h2 class="title">Channels (160)</h2>
+
+        <ul class="channels-list">
+            <li class="channel" 
+                *ngFor="let occupation of occupations" 
+                (click)="changeOccupations(occupation.id)"
+                [ngClass]="{'active': active === occupation.id}"> # {{ occupation.name }} </li>
+        </ul>
+
+    </div>
+
+
+</aside>

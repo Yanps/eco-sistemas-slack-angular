@@ -1,10 +1,18 @@
 # EcoSistemasSlack
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.1.1.
+Esse projeto foi gerado com [Angular CLI](https://github.com/angular/angular-cli) version 10.1.1.
 
-## Development server
+## Requisitos
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+[NodeJS](https://nodejs.org/en/) versão 14.10.1 e [Angular CLI](https://github.com/angular/angular-cli) version 10.1.1.
+
+## Back end server
+
+Basta apenas rodar o comando `npm run server`
+
+## Front end server
+
+Rode o comando `ng serve` para o servidor de dev. Navegue até `http://localhost:4200/`. O app irá fazer o reload automaticamente, de acordo com as mudanças.
 
 ## Code scaffolding
 

@@ -1,0 +1,87 @@
+:host {
+    position: relative;
+    z-index: 1;
+    width: 250px;
+    background: var(--column-bg, #ae0001);
+    color: var(--text-color, #fff);
+
+    .main-title {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 18px 18px 0;
+        margin: 0;
+
+        .logo {
+            width: 28px;
+            height: auto;
+            position: relative;
+            top: 5px;
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--text-color, #fff);
+
+            .mat-icon {
+                width: 18px;
+                height: 18px;
+                font-size: 18px;
+                position: relative;
+                top: 3px;
+            }
+        }
+
+    }
+
+    .threads {
+        margin: 0.6rem 0;
+        padding: 0 18px;
+        opacity: 0.7;
+        
+        .title {
+            margin: 0;
+        }
+
+        .mat-icon {
+            position: relative;
+            top: 4px;
+        }
+    }
+
+    .channels {
+        margin: 0.5rem 0 1.5rem;
+        padding: 0  18px;
+
+        .title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 2.1;
+            text-transform: uppercase;
+            opacity: 0.6;
+        }
+
+        .channels-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+
+            .channel {
+                opacity: 0.7;
+                font-size: 14px;
+                margin-bottom: 8px;
+                padding: 4px;
+                cursor: pointer;
+
+                &:hover, &.active {
+                    background: var(--hover-item, #BE0002);                
+                }
+
+            }
+        }
+    }
+}

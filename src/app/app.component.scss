@@ -1,0 +1,67 @@
+:host {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    grid-template-rows: 1fr;
+    width: 100%;
+    height: 100%;
+
+    .users-wrap {
+        padding: 10px  20px;
+    }
+
+    .users {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        .user-wrap {
+            width: 20%;
+            margin: 8px  0;
+
+            .user {
+                padding: 6px;
+                position: relative;
+                height: 96px;
+                
+
+                * {
+                    display: block;
+                }
+
+                .user-photo { 
+                    width: 48px;
+                    height: auto;
+                    margin: 0 auto;
+                    position: relative;
+
+                    .status {
+                        display: block;
+                        width: 15px;
+                        height: 15px;
+                        background-color: darkgray;
+                        position: absolute;
+                        bottom: 0;
+                        right: 0;
+                        border-radius: 100%;
+                    }
+
+                    img {
+                        display: block;
+                        width: 48px;
+                        border-radius: 50%;
+                    }
+                }
+
+                .user-name {
+                    text-align: center;
+                    font-size: 14px;
+                    margin-top: 4px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 100%;
+                }
+            }
+        }
+    }
+}
