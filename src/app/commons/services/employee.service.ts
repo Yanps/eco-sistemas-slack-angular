@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 export class EmployeeService {
 
   
-  private apiURL: string = 'http://localhost:8888/api/v1/';
+  private apiURL: string = 'https://calm-escarpment-52868.herokuapp.com/api/v1/';
 
   constructor(private HttpClient: HttpClient) { }
 
