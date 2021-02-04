@@ -24,7 +24,8 @@
                         <img [src]="user.profile.image_48" alt="">
                         <span [ngClass]="checkUserStatus(user.id)" class="status"></span>
                     </span>
-                    <span class="user-name" [matTooltip]="user.profile.display_name">{{ user.profile.display_name }}</span>
+                    <span class="user-name" *ngIf="user.profile.display_name" [matTooltip]="user.profile.display_name">{{ user.profile.display_name }}</span>
+                    <span class="user-name" *ngIf="user.profile.email" [matTooltip]="user.profile.email">{{ user.profile.email }}</span>
                     
                 </div>
         
