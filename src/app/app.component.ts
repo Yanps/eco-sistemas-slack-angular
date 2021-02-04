@@ -94,10 +94,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         
         if (key.online === undefined && key.id) {
 
-          console.log(key);
 
           this.slackService.getUserPresence(key.id).subscribe(presence => {
-            this.users[index].online = presence.online;
+            this.users[index].presence = presence.presence;
           });
         }
 
@@ -105,6 +104,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     });
 
+  }
+
+  getTotalPresence(type: string) {
+    const presence = this.users.filter(user => user.presence === type) || [];
+    return presence.length;
   }
 
 }

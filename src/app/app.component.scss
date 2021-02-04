@@ -43,6 +43,10 @@
                         bottom: 0;
                         right: 0;
                         border-radius: 100%;
+
+                        &.active {
+                            background-color: chartreuse;
+                        }
                     }
 
                     img {

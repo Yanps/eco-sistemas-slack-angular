@@ -6,6 +6,10 @@
         <mat-label>Buscar usuários</mat-label>
         <input matInput placeholder="Buscar por nomes" #search>
     </mat-form-field>
+
+    <div class="total">
+        Online: {{ getTotalPresence('active') }} / offline : {{ getTotalPresence('away') }}
+    </div>
     
     <p class="no-users" *ngIf="users.length < 1">Não foram encontrados usuários para esse time</p>
 
