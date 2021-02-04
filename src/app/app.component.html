@@ -8,7 +8,7 @@
     </mat-form-field>
 
     <div class="total">
-        Online: {{ getTotalPresence('active') }} / offline : {{ getTotalPresence('away') }}
+        Online: {{ getTotalPresence('active') }} ({{getPercent('active')  }}%) / offline : {{ getTotalPresence('away') }} ({{ getPercent('away') }}%)
     </div>
     
     <p class="no-users" *ngIf="users.length < 1">Não foram encontrados usuários para esse time</p>
@@ -19,7 +19,7 @@
 
             <div class="user-wrap" *ngIf="user.profile">
 
-                <div class="user">
+                <div class="user" (click)="goToUser(user.id)">
                     <span class="user-photo">
                         <img [src]="user.profile.image_48" alt="">
                         <span [ngClass]="checkUserStatus(user.id)" class="status"></span>

@@ -5,6 +5,7 @@ import { SlackService } from './commons/services/slack.service';
 import { OccupationsService } from './commons/services/occupations.service';
 import forAsync from 'for-async';
 import { EmployeeService } from './commons/services/employee.service';
+import { textChangeRangeIsUnchanged } from 'typescript';
 
 @Component({
   selector: 'app-root',
@@ -109,6 +110,19 @@ export class AppComponent implements OnInit, AfterViewInit {
   getTotalPresence(type: string) {
     const presence = this.users.filter(user => user.presence === type) || [];
     return presence.length;
+  }
+
+
+  getPercent(type: string) {
+    const presence = this.users.filter(user => user.presence === type) || [];
+    const percent = ( presence.length * 100 ) / this.users.length;
+
+    return  percent.toFixed(0);
+  }
+
+
+  goToUser(userId) {
+    location.href = `https://ecosistemasworkspace.slack.com/team/${userId}`
   }
 
 }
