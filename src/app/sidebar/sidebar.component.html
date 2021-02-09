@@ -16,6 +16,10 @@
 
         <ul class="channels-list">
             <li class="channel" 
+            (click)="changeOccupations(0)"
+            [ngClass]="{'active': active === 0}"> # GENERAL </li>
+            
+            <li class="channel" 
                 *ngFor="let occupation of occupations" 
                 (click)="changeOccupations(occupation.id)"
                 [ngClass]="{'active': active === occupation.id}"> # {{ occupation.name }} </li>

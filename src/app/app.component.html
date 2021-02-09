@@ -1,37 +1,103 @@
-<app-sidebar [occupations]="occupations" (changeOccupation)="changeOccupation($event)"></app-sidebar>
+<app-loader *ngIf="loading"></app-loader>
 
-<div class="users-wrap">
+<div class="container" fxLayout="row" fxLayoutAlign="start stretch">
 
-    <mat-form-field class="example-full-width" appearance="outline">
-        <mat-label>Buscar usuários</mat-label>
-        <input matInput placeholder="Buscar por nomes" #search>
-    </mat-form-field>
+    <app-sidebar [occupations]="occupations" (changeOccupation)="changeOccupation($event)"></app-sidebar>
 
-    <div class="total">
-        Online: {{ getTotalPresence('active') }} ({{getPercent('active')  }}%) / offline : {{ getTotalPresence('away') }} ({{ getPercent('away') }}%)
-    </div>
+    <div class="users-wrap" fxLayout="column">
+
+        <p class="no-results" *ngIf="offlineUsers.length < 1 && onlineUsers.length < 1 && !loading">Não foram encontrados usuários</p>
+
+        <div class="total-wrap" fxLayout="row" fxLayoutAlign="center center">
+
+            <div class="online">
     
-    <p class="no-users" *ngIf="users.length < 1">Não foram encontrados usuários para esse time</p>
+                <span class="percent">{{ getTotalPercent(onlineUsers) }} %</span>
 
-    <div class="users" *ngIf="users && users.length > 0">
+                <mat-spinner [mode]="'determinate'" [value]="getTotalPercent(onlineUsers)"></mat-spinner>
 
-        <ng-container *ngFor="let user of users">
+                <span class="total">{{ onlineUsers.length }} usuários online</span>
 
-            <div class="user-wrap" *ngIf="user.profile">
-
-                <div class="user" (click)="goToUser(user.id)">
-                    <span class="user-photo">
-                        <img [src]="user.profile.image_48" alt="">
-                        <span [ngClass]="checkUserStatus(user.id)" class="status"></span>
-                    </span>
-                    <span class="user-name" *ngIf="user.profile.display_name" [matTooltip]="user.profile.display_name">{{ user.profile.display_name }}</span>
-                    <span class="user-name" *ngIf="!user.profile.display_name && user.profile.email" [matTooltip]="user.profile.email">{{ user.profile.email }}</span>
-                    
-                </div>
-        
             </div>
 
-        </ng-container> 
+            <div class="offline">
+    
+                <span class="percent">{{ getTotalPercent(offlineUsers) }} %</span>
+
+                <mat-spinner [mode]="'determinate'" [value]="getTotalPercent(offlineUsers)"></mat-spinner>
+
+                <span class="total">{{ offlineUsers.length }} usuários offline</span>
+
+            </div>
+
+        </div>
+
+        <div class="search-wrap">
+
+            <mat-form-field class="search" appearance="outline">
+                <mat-label>Buscar usuários pelo nome</mat-label>
+                <input matInput placeholder="Buscar por nomes" #search>
+            </mat-form-field>
+
+        </div>
+
+        <div class="users" *ngIf="users && users.length > 0">
+
+            <div fxLayout="row wrap" fxLayoutAlign="start center">
+
+                <p class="no-results" *ngIf="onlineUsers.length < 1 && offlineUsers.length > 0 && !loading">Não há usuários online</p>
+
+                <ng-container *ngFor="let user of orderUsers(onlineUsers, 'email')">
+
+                    <div class="user-wrap" *ngIf="user.profile">
+        
+                        <div class="card user user-online" (click)="goToUser(user.id)" fxLayout="row" fxLayoutAlign="start center">
+                            <span class="user-photo">
+                                <img [src]="user.profile.image_48" alt="">
+                                <span [ngClass]="checkUserStatus(user.id)" class="status"></span>
+                            </span>
+                            <span class="user-name" *ngIf="user.profile.display_name" [matTooltip]="user.profile.display_name">{{ user.profile.display_name }}  <small>({{user.profile.email}})</small></span>
+                            <span class="user-name" *ngIf="!user.profile.display_name && user.profile.email" [matTooltip]="user.profile.email">{{ user.profile.email }}</span>          
+                        </div>
+                
+                    </div>
+        
+        
+                </ng-container>
+
+            </div>
+
+            <div class="see-more" *ngIf="offlineUsers && offlineUsers.length > 0 && !loading">
+                <span *ngIf="!seeMore" (click)="seeMore = true;">Ver mais <mat-icon>arrow_circle_down</mat-icon></span>
+                <span *ngIf="seeMore" (click)="seeMore = false;">Ver menos <mat-icon>arrow_circle_up</mat-icon></span>
+            </div>
+ 
+
+            <div fxLayout="row wrap" fxLayoutAlign="start center" *ngIf="seeMore">
+
+                <p class="no-results" *ngIf="offlineUsers.length < 1 && onlineUsers.length > 0 && !loading">Não há usuários online</p>
+
+                <ng-container *ngFor="let user of orderUsers(offlineUsers, 'email')">
+
+                    <div class="user-wrap" *ngIf="user.profile" >
+        
+                        <div class="card user user-offline" (click)="goToUser(user.id)" fxLayout="row" fxLayoutAlign="start center">
+                            <span class="user-photo">
+                                <img [src]="user.profile.image_48" alt="">
+                                <span [ngClass]="checkUserStatus(user.id)" class="status"></span>
+                            </span>
+                            <span class="user-name" *ngIf="user.profile.display_name" [matTooltip]="user.profile.display_name">{{ user.profile.display_name }}</span>
+                            <span class="user-name" *ngIf="!user.profile.display_name && user.profile.email" [matTooltip]="user.profile.email">{{ user.profile.email }}</span>          
+                        </div>
+                
+                    </div>
+        
+        
+                </ng-container>
+
+            </div>
+
+        </div>
 
     </div>
 

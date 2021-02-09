@@ -1,11 +1,12 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { fromEvent } from 'rxjs';
-import { map, filter, distinctUntilChanged } from 'rxjs/operators';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { SlackService } from './commons/services/slack.service';
-import { OccupationsService } from './commons/services/occupations.service';
-import forAsync from 'for-async';
 import { EmployeeService } from './commons/services/employee.service';
-import { textChangeRangeIsUnchanged } from 'typescript';
+import forAsync from 'for-async';
+import { KeyValue } from '@angular/common';
+import { fromEvent } from 'rxjs';
+import { distinctUntilChanged, map } from 'rxjs/operators';
+import { trigger } from '@angular/animations';
+import { OccupationsService } from './commons/services/occupations.service';
 
 @Component({
   selector: 'app-root',
@@ -18,48 +19,71 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public users: any = [];
 
-  public occupations: any;
+  public onlineUsers: any = [];
+
+  public offlineUsers: any = [];
 
   public usersInMemory: any;
 
-  public occupationId: number = 4;
+  public occupationId: number = 0;
+
+  public seeMore: boolean = false;
+
+  public loading: boolean = true;
+
+  public occupations: any = [];
+
+  private finalizeLoader: false;
+
 
   constructor(
     private slackService: SlackService,
-    private occupationsService: OccupationsService,
-    private employeeService: EmployeeService) {
-  }
+    private employeeService: EmployeeService,
+    private occupationsService: OccupationsService
+  ) {}
 
-  ngOnInit() {
-    
-    this.slackService.getUsersList().subscribe(response => {     
+  ngOnInit(): void {
+
+    this.slackService.getUsersList().subscribe(response => {
       this.usersInMemory = response.members;
-      this.setEmployeesFromTeam(this.occupationId);     
+      this.users =  this.usersInMemory;
+
+      this.setUsersStatus(this.users);
     });
 
     this.getOccupations();
 
-    
   }
 
-  ngAfterViewInit() {
-    
+
+  ngAfterViewInit(): void {
+
     fromEvent<any>(this.search.nativeElement, 'keyup')
       .pipe(
         map(event => event.target.value),
         distinctUntilChanged()
       ).subscribe(searchTerm => {
 
-        this.users = this.usersInMemory.filter(user => user.profile.display_name.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1);
+        this.onlineUsers = this.users.filter(user => {
+          const searchMatch = user.profile.display_name.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1;
+
+          if (searchMatch && user.presence === 'active') {
+            return true;
+          }
+
+        })
+
+        this.offlineUsers = this.users.filter(user => {
+          const searchMatch = user.profile.display_name.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1;
+
+          if (searchMatch && user.presence === 'away') {
+            return true;
+          }
+
+        })
 
       });
 
-  }
-
-
-  checkUserStatus(userId) {
-    const user = this.users.find(user => user.id === userId) || {};
-    return user.presence;
   }
 
 
@@ -69,60 +93,136 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
-  getEmployees(teamId: number) {
-    return this.employeeService.getEmployeesByTeam(teamId);
-  }
 
-  changeOccupation($event) {
-    this.users = [];
-    this.occupationId = $event;
-    this.setEmployeesFromTeam($event);
-  }
+  setUsersStatus(users: any) {
+    
+    for (let i=0; i<users.length; i+=1) {
 
-  setEmployeesFromTeam(teamId: number) {
+      const key = users[i];
 
-    this.getEmployees(this.occupationId).subscribe(employees => {
-        
-      for (let i=0; i<employees.length; i+=1) {
-        const employee = employees[i];
-        const user =  this.usersInMemory.find(user => user.profile.email === employee.email) || {};
-        
-        this.users[i] = user; 
+      if (key.id && !key.presence) {
+        this.slackService.getUserPresence(key.id).subscribe(userPresence => {
+          
+          const presence = userPresence.presence;
+          
+          if (this.users[i]) {
+            const user = this.users[i];
+          
+            user.presence = presence;
+            this.setUsersByPresence(user, presence);
+          }
+
+          this.finishingLoader(i, users);
+
+
+
+        }, 
+        error => {
+          this.users.splice(i, 1);
+          this.finishingLoader(i, users);
+        }),
+        () => this.finishingLoader(i, users)
+
       }
 
-      forAsync(this.users, (key, index) => {
+    }
+    
+  }
 
-        
-        if (key.online === undefined && key.id) {
+
+  finishingLoader(idx, users) {
+    const totalUsers = this.users.length;
+    const totalOnlineUsers = this.onlineUsers.length;
+    const totalOfflineUsers = this.offlineUsers.length;
+
+    // console.log(totalUsers, totalOnlineUsers, totalOfflineUsers);
+
+    if (totalUsers === (totalOnlineUsers + totalOfflineUsers)) {
+      this.loading = false;
+    }
+
+    if (idx === users.length -1) {
+      this.loading = false;
+    }
+
+  }
 
 
-          this.slackService.getUserPresence(key.id).subscribe(presence => {
-            this.users[index].presence = presence.presence;
-          });
+  setUsersByPresence(user, presence) {
+  
+    if (presence === 'active') {         
+      this.onlineUsers.push(user);
+    } else {
+      this.offlineUsers.push(user);
+    }
+    
+  }
+
+
+  getAllEmployees() {
+    return this.employeeService.getEmployees();
+  }
+
+
+  setEmployeesFromTeam(teamId) {
+    this.employeeService.getEmployeesByTeam(teamId).subscribe(employees => {
+      const filteredEmployees = [];
+
+      for (let i=0; i<employees.length; i+=1) {
+        const empl = employees[i];
+        const user = this.users.find(user => user.profile.email === empl.email);
+
+        if (user) {
+          filteredEmployees.push(user);
         }
 
-      });
+      }
+
+      this.onlineUsers = filteredEmployees.filter(user => user.presence === 'active');
+      this.offlineUsers = filteredEmployees.filter(user => user.presence === 'away');
 
     });
-
-  }
-
-  getTotalPresence(type: string) {
-    const presence = this.users.filter(user => user.presence === type) || [];
-    return presence.length;
   }
 
 
-  getPercent(type: string) {
-    const presence = this.users.filter(user => user.presence === type) || [];
-    const percent = ( presence.length * 100 ) / this.users.length;
+  goToUser() {}
 
-    return  percent.toFixed(0);
+
+  checkUserStatus(userId) {
+    const user = this.users.find(user => user.id === userId) || {};
+    return {
+      'active': user.presence === 'active',
+      'blink': user.presence === 'active'
+    };
   }
 
 
-  goToUser(userId) {
-    location.href = `https://ecosistemasworkspace.slack.com/team/${userId}`
+  orderUsers(users, property) {
+    
+    function compare( a, b ) {
+      if ( a['profile'][property] < b['profile'][property] ){
+        return -1;
+      }
+      if ( a['profile'][property] > b['profile'][property] ){
+        return 1;
+      }
+      return 0;
+    }
+    
+    return users.sort( compare )
   }
 
+
+  getTotalPercent(users) {
+    const percent = ( users.length * 100 ) / this.users.length;
+    return  isNaN(percent) ? 0 : percent.toFixed(0);
+  }
+
+
+  changeOccupation($event) {
+    this.occupationId = $event;
+    this.setEmployeesFromTeam(this.occupationId);
+  }
+
+    
 }

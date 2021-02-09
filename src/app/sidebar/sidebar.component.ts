@@ -13,7 +13,7 @@ export class SidebarComponent implements OnInit {
   @Output('changeOccupation') changeOccupation = new EventEmitter(); 
 
 
-  public active: number = 4; 
+  public active: number = 0; 
 
   constructor() { }
 

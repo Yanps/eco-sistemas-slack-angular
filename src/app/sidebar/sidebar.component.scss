@@ -2,7 +2,8 @@
     position: relative;
     z-index: 1;
     width: 250px;
-    background: var(--column-bg, #ae0001);
+    min-height: 100%;
+    background: #36013f;
     color: var(--text-color, #fff);
 
     .main-title {

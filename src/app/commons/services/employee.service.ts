@@ -12,6 +12,11 @@ export class EmployeeService {
   constructor(private HttpClient: HttpClient) { }
 
 
+  public getEmployees() {
+    const endpoint = `${this.apiURL}employees`;
+    return this.HttpClient.request<any>('get', endpoint);
+  }
+
   public getEmployeesByTeam(teamId: number) {
     const endpoint = `${this.apiURL}employee/team/${teamId}`;
     return this.HttpClient.request<any>('get', endpoint);
