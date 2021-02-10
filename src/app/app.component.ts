@@ -7,6 +7,7 @@ import { fromEvent } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 import { trigger } from '@angular/animations';
 import { OccupationsService } from './commons/services/occupations.service';
+import { TOUCH_BUFFER_MS } from '@angular/cdk/a11y';
 
 @Component({
   selector: 'app-root',
@@ -170,13 +171,15 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       for (let i=0; i<employees.length; i+=1) {
         const empl = employees[i];
-        const user = this.users.find(user => user.profile.email === empl.email);
+        const user = this.usersInMemory.find(user => user.profile.email === empl.email);
 
         if (user) {
           filteredEmployees.push(user);
         }
 
       }
+
+      this.users = filteredEmployees;
 
       this.onlineUsers = filteredEmployees.filter(user => user.presence === 'active');
       this.offlineUsers = filteredEmployees.filter(user => user.presence === 'away');
@@ -221,7 +224,15 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   changeOccupation($event) {
     this.occupationId = $event;
-    this.setEmployeesFromTeam(this.occupationId);
+    
+    if (this.occupationId !== 0) {
+      this.setEmployeesFromTeam(this.occupationId);
+    } else {
+      this.users = this.usersInMemory;
+      this.onlineUsers = this.users.filter(user => user.presence === 'active');
+      this.offlineUsers = this.users.filter(user => user.presence === 'away');
+    }
+
   }
 
     

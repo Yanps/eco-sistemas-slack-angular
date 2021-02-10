@@ -10,6 +10,8 @@ export class SidebarComponent implements OnInit {
 
   @Input('occupations') occupations;
 
+  @Input('users') users: any = [];
+
   @Output('changeOccupation') changeOccupation = new EventEmitter(); 
 
 
@@ -24,5 +26,7 @@ export class SidebarComponent implements OnInit {
     this.active = occupationId;
     this.changeOccupation.emit(occupationId);
   }
+
+  
 
 }

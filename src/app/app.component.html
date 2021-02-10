@@ -2,7 +2,7 @@
 
 <div class="container" fxLayout="row" fxLayoutAlign="start stretch">
 
-    <app-sidebar [occupations]="occupations" (changeOccupation)="changeOccupation($event)"></app-sidebar>
+    <app-sidebar [occupations]="occupations" [users]="users" (changeOccupation)="changeOccupation($event)"></app-sidebar>
 
     <div class="users-wrap" fxLayout="column">
 
@@ -41,7 +41,7 @@
 
         </div>
 
-        <div class="users" *ngIf="users && users.length > 0">
+        <div class="users">
 
             <div fxLayout="row wrap" fxLayoutAlign="start center">
 
