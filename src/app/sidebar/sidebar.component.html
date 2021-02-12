@@ -15,6 +15,11 @@
         <h2 class="title">Channels</h2>
 
         <ul class="channels-list">
+
+            <li class="channel" 
+            (click)="changeOccupations(-1)"
+            [ngClass]="{'active': active === -1}"> # TIMES </li>
+
             <li class="channel" 
             (click)="changeOccupations(0)"
             [ngClass]="{'active': active === 0}"> # GENERAL </li>

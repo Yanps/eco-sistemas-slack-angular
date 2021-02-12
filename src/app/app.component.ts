@@ -3,8 +3,8 @@ import { SlackService } from './commons/services/slack.service';
 import { EmployeeService } from './commons/services/employee.service';
 import forAsync from 'for-async';
 import { KeyValue } from '@angular/common';
-import { fromEvent } from 'rxjs';
-import { distinctUntilChanged, map } from 'rxjs/operators';
+import { fromEvent, of } from 'rxjs';
+import { distinctUntilChanged, filter, map, tap } from 'rxjs/operators';
 import { trigger } from '@angular/animations';
 import { OccupationsService } from './commons/services/occupations.service';
 import { TOUCH_BUFFER_MS } from '@angular/cdk/a11y';
@@ -26,7 +26,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public usersInMemory: any;
 
-  public occupationId: number = 0;
+  public occupationId: number = -1;
 
   public seeMore: boolean = false;
 
@@ -36,12 +36,20 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private finalizeLoader: false;
 
+  public employees = [];
+
 
   constructor(
     private slackService: SlackService,
     private employeeService: EmployeeService,
     private occupationsService: OccupationsService
-  ) {}
+  ) {
+
+    this.getAllEmployees().subscribe(employees => {
+      this.employees = employees;
+    });
+
+  }
 
   ngOnInit(): void {
 
@@ -58,32 +66,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   ngAfterViewInit(): void {
-
-    fromEvent<any>(this.search.nativeElement, 'keyup')
-      .pipe(
-        map(event => event.target.value),
-        distinctUntilChanged()
-      ).subscribe(searchTerm => {
-
-        this.onlineUsers = this.users.filter(user => {
-          const searchMatch = user.profile.display_name.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1;
-
-          if (searchMatch && user.presence === 'active') {
-            return true;
-          }
-
-        })
-
-        this.offlineUsers = this.users.filter(user => {
-          const searchMatch = user.profile.display_name.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1;
-
-          if (searchMatch && user.presence === 'away') {
-            return true;
-          }
-
-        })
-
-      });
 
   }
 
@@ -108,7 +90,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           
           if (this.users[i]) {
             const user = this.users[i];
-          
+
             user.presence = presence;
             this.setUsersByPresence(user, presence);
           }
@@ -188,7 +170,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
 
-  goToUser() {}
+  goToUser(userId) { 
+    window.open(`https://ecosistemasworkspace.slack.com/team/${userId}`, '_blank');
+  }
 
 
   checkUserStatus(userId) {
@@ -225,15 +209,71 @@ export class AppComponent implements OnInit, AfterViewInit {
   changeOccupation($event) {
     this.occupationId = $event;
     
-    if (this.occupationId !== 0) {
-      this.setEmployeesFromTeam(this.occupationId);
-    } else {
+  
+    if (this.occupationId === 0) {
       this.users = this.usersInMemory;
       this.onlineUsers = this.users.filter(user => user.presence === 'active');
       this.offlineUsers = this.users.filter(user => user.presence === 'away');
+    }   
+
+    if (this.occupationId > 0) {
+      this.setEmployeesFromTeam(this.occupationId);
+    } 
+
+
+    if (this.search) {
+      this.setSearch();
     }
 
   }
 
+  setSearch() {
+
+    console.log('setSearch')
+
+    fromEvent<any>(this.search.nativeElement, 'keyup')
+      .pipe(
+        map(event => event.target.value),
+        distinctUntilChanged(),
+        tap(console.log)
+      ).subscribe(searchTerm => {
+
+        this.onlineUsers = this.users.filter(user => {
+          const searchMatch = user.profile.display_name.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1;
+
+          if (searchMatch && user.presence === 'active') {
+            return true;
+          }
+
+        })
+
+        this.offlineUsers = this.users.filter(user => {
+          const searchMatch = user.profile.display_name.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1;
+
+          if (searchMatch && user.presence === 'away') {
+            return true;
+          }
+
+        })
+
+      });
+  }
+
+  getTotalPercentByTeam(users, occupationId) {
+    const filteredEmployees = this.employees.filter(employee => employee.occupation_id === occupationId);
+    const filteredUsers = users.filter(user => filteredEmployees.find(employee => employee.email === user.profile.email));
+    const percent = (filteredUsers.length * 100) / filteredEmployees.length;  
+
+    return isNaN(percent) ? 0 : percent.toFixed(0);
+  }
+
+
+  getTotalByTeam(users, occupationId) {
+    const filteredEmployees = this.employees.filter(employee => employee.occupation_id === occupationId);
+    const filteredUsers = users.filter(user => filteredEmployees.find(employee => employee.email === user.profile.email)) || [];
+
+    return filteredUsers.length;
+  }
+ 
     
 }

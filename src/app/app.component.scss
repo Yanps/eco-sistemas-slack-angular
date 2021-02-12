@@ -45,7 +45,7 @@
         }
     }
 
-    .users-wrap {
+    .users-wrap, .teams-wrap {
         padding: 10px  20px;
         width: calc(100% - 250px);
     }
@@ -55,6 +55,23 @@
         font-weight: bold;
         text-align: center;
         width: 100%;
+    }
+
+    .teams-wrap {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+
+    .team {
+        width: 100%;
+    }
+
+    .user-name {
+        small {
+            font-weight: bold;
+            color:darkgray;
+        }
     }
 
     .users {
@@ -113,15 +130,34 @@
         }
     }
 
+    .team {
+        margin: 20px;
+
+        .percent {
+            font-size: 16px;
+            font-weight: bold;
+            position: relative;
+            display: block;
+            text-align: center;
+            top: 46%;
+        }
+    }
+
+    .online-status,
+    .offline-status {
+        position: relative;
+
+    }
+
     ::ng-deep {
         
-        .online {
+        .online, .online-status {
             .mat-progress-spinner circle, .mat-spinner circle {
                 stroke: chartreuse;
             }
         }
 
-        .offline {
+        .offline, .offline-status {
             .mat-progress-spinner circle, .mat-spinner circle {
                 stroke: crimson;
             }
@@ -159,6 +195,10 @@
 
 
     @media screen and (min-width: 959px){
+    
+        .team {
+            width: 33.3333333333%;
+        }
        
 
         .users {

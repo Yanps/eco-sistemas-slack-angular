@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { of } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +16,17 @@ export class EmployeeService {
 
   public getEmployees() {
     const endpoint = `${this.apiURL}employees`;
-    return this.HttpClient.request<any>('get', endpoint);
+    const localEmployees = localStorage.getItem('employees') || null;
+
+    if (localEmployees) {
+      return of(JSON.parse(localEmployees));
+    }
+
+    return this.HttpClient.request<any>('get', endpoint)
+      .pipe(
+        tap(employees => localStorage.setItem('employees', JSON.stringify(employees)))
+      )
+      
   }
 
   public getEmployeesByTeam(teamId: number) {
