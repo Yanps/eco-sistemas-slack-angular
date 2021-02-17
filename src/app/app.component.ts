@@ -259,11 +259,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       });
   }
 
-  getTotalPercentByTeam(users, occupationId) {
-    const filteredEmployees = this.employees.filter(employee => employee.occupation_id === occupationId);
-    const filteredUsers = users.filter(user => filteredEmployees.find(employee => employee.email === user.profile.email));
-    const percent = (filteredUsers.length * 100) / filteredEmployees.length;  
-
+  getTotalPercentByTeam(users, occupationId, otherUsers) {
+    const totalUsers = this.getTotalByTeam(users, occupationId);
+    const totalOtherUsers = this.getTotalByTeam(otherUsers, occupationId);
+    const total = totalUsers + totalOtherUsers;
+    const percent = (totalUsers * 100) / total;
     return isNaN(percent) ? 0 : percent.toFixed(0);
   }
 
@@ -275,5 +275,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     return filteredUsers.length;
   }
  
-    
+  
+
+
 }

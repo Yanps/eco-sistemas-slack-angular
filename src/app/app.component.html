@@ -103,7 +103,7 @@
 
     <div class="teams-wrap" fxLayout="row" fxLayoutAlign="center center" *ngIf="employees.length > 0 && occupationId === -1">
 
-        <div class="team card" *ngFor="let occupation of occupations">
+        <div class="team card" *ngFor="let occupation of occupations" (click)="changeOccupation(occupation.id)">
             # {{occupation.name}} - 
 
             <span class="total total-online">{{ getTotalByTeam(onlineUsers, occupation.id) }} online</span> /
@@ -113,13 +113,13 @@
            <div class="users-status" fxLayout="row" fxLayout.lt-md="column">
 
                 <div class="online-status" fxFlex="100" fxFlex.gt-md="50">
-                    <span class="percent">{{getTotalPercentByTeam(onlineUsers, occupation.id)}}%</span>
-                    <mat-spinner [mode]="'determinate'" [value]="getTotalPercentByTeam(onlineUsers, occupation.id)"></mat-spinner>
+                    <span class="percent">{{getTotalPercentByTeam(onlineUsers, occupation.id, offlineUsers)}}%</span>
+                    <mat-spinner [mode]="'determinate'" [value]="getTotalPercentByTeam(onlineUsers, occupation.id, offlineUsers)"></mat-spinner>
                 </div>
 
                 <div class="offline-status" fxFlex="100" fxFlex.gt-md="50">
-                    <span class="percent">{{getTotalPercentByTeam(offlineUsers, occupation.id)}}%</span>
-                    <mat-spinner [mode]="'determinate'" [value]="getTotalPercentByTeam(offlineUsers, occupation.id)"></mat-spinner>
+                    <span class="percent">{{getTotalPercentByTeam(offlineUsers, occupation.id, onlineUsers)}}%</span>
+                    <mat-spinner [mode]="'determinate'" [value]="getTotalPercentByTeam(offlineUsers, occupation.id, onlineUsers)"></mat-spinner>
                 </div>
 
            </div>
