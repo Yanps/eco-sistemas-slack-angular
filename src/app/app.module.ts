@@ -13,6 +13,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { HeaderComponent } from './header/header.component';
 import { LoaderComponent } from './commons/components/loader/loader.component';
+import { PageComponent } from './page/page.component';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { LoaderComponent } from './commons/components/loader/loader.component';
     AppComponent,
     SidebarComponent,
     HeaderComponent,
-    LoaderComponent
+    LoaderComponent,
+    PageComponent
   ],
   imports: [
     BrowserModule,

@@ -22,9 +22,15 @@ export class SidebarComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  changeOccupations(occupationId) {
+  changeOccupations(occupationName,  occupationId?) {
     this.active = occupationId;
-    this.changeOccupation.emit(occupationId);
+    this.changeOccupation.emit(
+      {occupationName: occupationName, occupationId: occupationId} 
+    );
+  }
+
+  setRouterName(occupationName: string) {
+    return occupationName.toLowerCase().replace('. ', '-');
   }
 
   
